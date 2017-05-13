@@ -1,9 +1,8 @@
 package pl.com.bottega.exchangerate.api.impl;
 
 import pl.com.bottega.exchangerate.api.CalculationPanel;
-import pl.com.bottega.exchangerate.api.ExchangeRateDto;
-import pl.com.bottega.exchangerate.api.RatesCatalog;
 import pl.com.bottega.exchangerate.domain.CalculationResult;
+import pl.com.bottega.exchangerate.domain.ExchangeRate;
 import pl.com.bottega.exchangerate.domain.ExchangeRatesRepository;
 import pl.com.bottega.exchangerate.domain.commands.CalculationRequestCommand;
 
@@ -17,11 +16,9 @@ import java.time.format.DateTimeFormatter;
 public class StandardCalculationPanel implements CalculationPanel {
 
 	private ExchangeRatesRepository exchangeRatesRepository;
-	private RatesCatalog ratesCatalog;
 
-	public StandardCalculationPanel(ExchangeRatesRepository exchangeRatesRepository, RatesCatalog ratesCatalog) {
+	public StandardCalculationPanel(ExchangeRatesRepository exchangeRatesRepository) {
 		this.exchangeRatesRepository = exchangeRatesRepository;
-		this.ratesCatalog = ratesCatalog;
 	}
 
 	@Override
@@ -36,22 +33,22 @@ public class StandardCalculationPanel implements CalculationPanel {
 		BigDecimal calculatedAmount = BigDecimal.ONE;
 
 		if (from.equals("PLN")) {
-			ExchangeRateDto exchangeRateDto = ratesCatalog.get(dateFormat, to);
-			BigDecimal rate = exchangeRateDto.getRate();
+			ExchangeRate exchangeRate = exchangeRatesRepository.get(dateFormat, to);
+			BigDecimal rate = exchangeRate.getRate();
 			calculatedAmount = amount.divide(rate, new MathContext(4));
 		}
 
 		if (to.equals("PLN")) {
-			ExchangeRateDto exchangeRateDto = ratesCatalog.get(dateFormat, from);
-			BigDecimal rate = exchangeRateDto.getRate();
+			ExchangeRate exchangeRate = exchangeRatesRepository.get(dateFormat, from);
+			BigDecimal rate = exchangeRate.getRate();
 			calculatedAmount = amount.multiply(rate);
 		}
 
 		if (!(to.equals("PLN")) && !(from.equals("PLN"))) {
-			ExchangeRateDto exchangeRateDtoTo = ratesCatalog.get(dateFormat, to);
-			BigDecimal rateTo = exchangeRateDtoTo.getRate();
-			ExchangeRateDto exchangeRateDtoFrom = ratesCatalog.get(dateFormat, from);
-			BigDecimal rateFrom = exchangeRateDtoFrom.getRate();
+			ExchangeRate exchangeRateTo = exchangeRatesRepository.get(dateFormat, to);
+			BigDecimal rateTo = exchangeRateTo.getRate();
+			ExchangeRate exchangeRateFrom = exchangeRatesRepository.get(dateFormat, from);
+			BigDecimal rateFrom = exchangeRateFrom.getRate();
 			calculatedAmount = (amount.multiply(rateFrom)).divide(rateTo, new MathContext(4));
 		}
 

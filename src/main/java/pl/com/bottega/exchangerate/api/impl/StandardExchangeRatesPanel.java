@@ -6,6 +6,8 @@ import pl.com.bottega.exchangerate.domain.ExchangeRatesRepository;
 import pl.com.bottega.exchangerate.domain.commands.CreateExchangeRateCommand;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Transactional
 public class StandardExchangeRatesPanel implements ExchangeRatesPanel {
@@ -18,7 +20,11 @@ public class StandardExchangeRatesPanel implements ExchangeRatesPanel {
 
 	@Override
 	public void createExchangeRates(CreateExchangeRateCommand command) {
-		ExchangeRate exchangeRate = new ExchangeRate(command.getDate(), command.getCurrency(), command.getRate());
+		LocalDate date = command.getDate();
+		String currency = command.getCurrency();
+		BigDecimal rate = command.getRate();
+		ExchangeRate exchangeRate = new ExchangeRate(date, currency, rate);
+		exchangeRatesRepository.removeExistingRates(date, currency);
 		exchangeRatesRepository.put(exchangeRate);
 	}
 

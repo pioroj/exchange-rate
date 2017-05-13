@@ -6,6 +6,9 @@ import pl.com.bottega.exchangerate.domain.NoRateException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.time.LocalDate;
+import java.util.List;
 
 public class JPAExchangeRatesRepository implements ExchangeRatesRepository {
 
@@ -18,11 +21,26 @@ public class JPAExchangeRatesRepository implements ExchangeRatesRepository {
 	}
 
 	@Override
-	public ExchangeRate get(Long id) {
-		ExchangeRate exchangeRate = entityManager.find(ExchangeRate.class, id);
-		if (exchangeRate == null)
+	public ExchangeRate get(LocalDate date, String currency) {
+		Query query = entityManager.createQuery("FROM ExchangeRate e WHERE e.date =:date AND e.currency =:currency)");
+		query.setParameter("date", date);
+		query.setParameter("currency", currency);
+		List<ExchangeRate> exchangeRates = query.getResultList();
+		if (exchangeRates.isEmpty())
 			throw new NoRateException();
+		ExchangeRate exchangeRate = (ExchangeRate) query.getResultList().get(0);
 		return exchangeRate;
+	}
+
+	@Override
+	public void removeExistingRates(LocalDate date, String currency) {
+		Query query = entityManager.createQuery("FROM ExchangeRate e WHERE e.date =:date AND e.currency =:currency)");
+		query.setParameter("date", date);
+		query.setParameter("currency", currency);
+		List<ExchangeRate> exchangeRates = query.getResultList();
+		for (ExchangeRate exchangeRate : exchangeRates) {
+			entityManager.remove(exchangeRate);
+		}
 	}
 
 }

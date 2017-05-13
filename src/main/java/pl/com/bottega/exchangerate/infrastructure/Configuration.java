@@ -3,7 +3,6 @@ package pl.com.bottega.exchangerate.infrastructure;
 import org.springframework.context.annotation.Bean;
 import pl.com.bottega.exchangerate.api.CalculationPanel;
 import pl.com.bottega.exchangerate.api.ExchangeRatesPanel;
-import pl.com.bottega.exchangerate.api.RatesCatalog;
 import pl.com.bottega.exchangerate.api.impl.StandardCalculationPanel;
 import pl.com.bottega.exchangerate.api.impl.StandardExchangeRatesPanel;
 import pl.com.bottega.exchangerate.domain.ExchangeRatesRepository;
@@ -22,13 +21,8 @@ public class Configuration {
 	}
 
 	@Bean
-	public RatesCatalog ratesCatalog() {
-		return new JPARatesCatalog();
-	}
-
-	@Bean
-	public CalculationPanel calculationPanel(ExchangeRatesRepository exchangeRatesRepository, RatesCatalog ratesCatalog) {
-		return new StandardCalculationPanel(exchangeRatesRepository, ratesCatalog);
+	public CalculationPanel calculationPanel(ExchangeRatesRepository exchangeRatesRepository) {
+		return new StandardCalculationPanel(exchangeRatesRepository);
 	}
 
 }
