@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @Entity
 public class ExchangeRate {
 
+	private static final ExchangeRate DEFAULT = new ExchangeRate(null, "PLN", BigDecimal.ONE);
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -40,4 +42,9 @@ public class ExchangeRate {
 	public BigDecimal getRate() {
 		return rate;
 	}
+
+	public static ExchangeRate getDefault() {
+		return DEFAULT;
+	}
+
 }

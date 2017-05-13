@@ -23,36 +23,43 @@ public class StandardCalculationPanel implements CalculationPanel {
 
 	@Override
 	public CalculationResult calculate(CalculationRequest command) {
-		String from = command.getFrom();
-		String to = command.getTo();
-		String date = command.getDate();
+		String currencyFrom = command.getFrom();
+		String currencyTo = command.getTo();
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		LocalDate dateFormat = LocalDate.parse(date, dtf);
+		LocalDate date = LocalDate.parse(command.getDate(), dtf);
 		BigDecimal amount = command.getAmount();
+
+		ExchangeRate exchangeRateFrom = getExchangeRate(date, currencyFrom);
+		ExchangeRate exchangeRateTo = getExchangeRate(date, currencyTo);
 
 		BigDecimal calculatedAmount = BigDecimal.ONE;
 
-		if (from.equals("PLN")) {
-			ExchangeRate exchangeRate = exchangeRatesRepository.get(dateFormat, to);
-			BigDecimal rate = exchangeRate.getRate();
-			calculatedAmount = amount.divide(rate, new MathContext(4));
+		BigDecimal rateTo = exchangeRateTo.getRate();
+		BigDecimal rateFrom = exchangeRateFrom.getRate();
+
+		if (currencyFrom.equals("PLN")) {
+			calculatedAmount = amount.divide(rateTo, new MathContext(4));
 		}
 
-		if (to.equals("PLN")) {
-			ExchangeRate exchangeRate = exchangeRatesRepository.get(dateFormat, from);
-			BigDecimal rate = exchangeRate.getRate();
-			calculatedAmount = amount.multiply(rate);
+		if (currencyTo.equals("PLN")) {
+			calculatedAmount = amount.multiply(rateFrom);
 		}
 
-		if (!(to.equals("PLN")) && !(from.equals("PLN"))) {
-			ExchangeRate exchangeRateTo = exchangeRatesRepository.get(dateFormat, to);
-			BigDecimal rateTo = exchangeRateTo.getRate();
-			ExchangeRate exchangeRateFrom = exchangeRatesRepository.get(dateFormat, from);
-			BigDecimal rateFrom = exchangeRateFrom.getRate();
+		if (!(currencyTo.equals("PLN")) && !(currencyFrom.equals("PLN"))) {
 			calculatedAmount = (amount.multiply(rateFrom)).divide(rateTo, new MathContext(4));
 		}
 
-		return new CalculationResult(from, to, date, amount, calculatedAmount);
+		return new CalculationResult(currencyFrom, currencyTo, command.getDate(), amount, calculatedAmount);
+	}
+
+	private ExchangeRate getExchangeRate(LocalDate date, String currencyFrom1) {
+		ExchangeRate exchangeRateFrom;
+		if (currencyFrom1.equals("PLN")) {
+			exchangeRateFrom = ExchangeRate.getDefault();
+		} else {
+			exchangeRateFrom = exchangeRatesRepository.get(date, currencyFrom1);
+		}
+		return exchangeRateFrom;
 	}
 
 
