@@ -32,32 +32,20 @@ public class StandardCalculationPanel implements CalculationPanel {
 		ExchangeRate exchangeRateFrom = getExchangeRate(date, currencyFrom);
 		ExchangeRate exchangeRateTo = getExchangeRate(date, currencyTo);
 
-		BigDecimal calculatedAmount = BigDecimal.ONE;
+		BigDecimal calculatedAmount;
 
-		BigDecimal rateTo = exchangeRateTo.getRate();
-		BigDecimal rateFrom = exchangeRateFrom.getRate();
-
-		if (currencyFrom.equals(ExchangeRate.getDefaultCurrency())) {
-			calculatedAmount = amount.divide(rateTo, new MathContext(4));
-		}
-
-		if (currencyTo.equals(ExchangeRate.getDefaultCurrency())) {
-			calculatedAmount = amount.multiply(rateFrom);
-		}
-
-		if (!(currencyTo.equals(ExchangeRate.getDefaultCurrency())) && !(currencyFrom.equals(ExchangeRate.getDefaultCurrency()))) {
-			calculatedAmount = (amount.multiply(rateFrom)).divide(rateTo, new MathContext(4));
-		}
+		calculatedAmount =
+				(amount.multiply(exchangeRateFrom.getRate()).divide(exchangeRateTo.getRate(), 2, BigDecimal.ROUND_FLOOR));
 
 		return new CalculationResult(currencyFrom, currencyTo, command.getDate(), amount, calculatedAmount);
 	}
 
-	private ExchangeRate getExchangeRate(LocalDate date, String currencyFrom1) {
+	private ExchangeRate getExchangeRate(LocalDate date, String currencyFrom) {
 		ExchangeRate exchangeRateFrom;
-		if (currencyFrom1.equals(ExchangeRate.getDefaultCurrency())) {
+		if (currencyFrom.equals(ExchangeRate.getDefaultCurrency())) {
 			exchangeRateFrom = ExchangeRate.getDefault();
 		} else {
-			exchangeRateFrom = exchangeRatesRepository.get(date, currencyFrom1);
+			exchangeRateFrom = exchangeRatesRepository.get(date, currencyFrom);
 		}
 		return exchangeRateFrom;
 	}
