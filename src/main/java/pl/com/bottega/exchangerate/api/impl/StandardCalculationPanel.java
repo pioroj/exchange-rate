@@ -41,6 +41,20 @@ public class StandardCalculationPanel implements CalculationPanel {
 			calculatedAmount = amount.divide(rate, new MathContext(4));
 		}
 
+		if (to.equals("PLN")) {
+			ExchangeRateDto exchangeRateDto = ratesCatalog.get(dateFormat, from);
+			BigDecimal rate = exchangeRateDto.getRate();
+			calculatedAmount = amount.multiply(rate);
+		}
+
+		if (!(to.equals("PLN")) && !(from.equals("PLN"))) {
+			ExchangeRateDto exchangeRateDtoTo = ratesCatalog.get(dateFormat, to);
+			BigDecimal rateTo = exchangeRateDtoTo.getRate();
+			ExchangeRateDto exchangeRateDtoFrom = ratesCatalog.get(dateFormat, from);
+			BigDecimal rateFrom = exchangeRateDtoFrom.getRate();
+			calculatedAmount = (amount.multiply(rateFrom)).divide(rateTo, new MathContext(4));
+		}
+
 		return new CalculationResult(from, to, date, amount, calculatedAmount);
 	}
 
