@@ -8,7 +8,6 @@ import pl.com.bottega.exchangerate.domain.commands.CalculationRequest;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -32,9 +31,7 @@ public class StandardCalculationPanel implements CalculationPanel {
 		ExchangeRate exchangeRateFrom = getExchangeRate(date, currencyFrom);
 		ExchangeRate exchangeRateTo = getExchangeRate(date, currencyTo);
 
-		BigDecimal calculatedAmount;
-
-		calculatedAmount =
+		BigDecimal calculatedAmount =
 				(amount.multiply(exchangeRateFrom.getRate()).divide(exchangeRateTo.getRate(), 2, BigDecimal.ROUND_FLOOR));
 
 		return new CalculationResult(currencyFrom, currencyTo, command.getDate(), amount, calculatedAmount);
