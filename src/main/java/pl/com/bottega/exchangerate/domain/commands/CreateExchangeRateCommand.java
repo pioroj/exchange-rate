@@ -1,10 +1,13 @@
 package pl.com.bottega.exchangerate.domain.commands;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class CreateExchangeRateCommand implements Validatable {
 
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate date;
 	private String currency;
 	private BigDecimal rate;
