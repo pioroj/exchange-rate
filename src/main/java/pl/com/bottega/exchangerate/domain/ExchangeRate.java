@@ -18,7 +18,6 @@ public class ExchangeRate {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate date;
 	private String currency;
 	private BigDecimal rate;
@@ -36,11 +35,11 @@ public class ExchangeRate {
 		return date;
 	}
 
-	public String getCurrency() {
+	String getCurrency() {
 		return currency;
 	}
 
-	public BigDecimal getRate() {
+	BigDecimal getRate() {
 		return rate;
 	}
 

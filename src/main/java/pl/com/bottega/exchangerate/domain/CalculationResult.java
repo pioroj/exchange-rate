@@ -1,6 +1,7 @@
 package pl.com.bottega.exchangerate.domain;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class CalculationResult {
 
@@ -36,5 +37,19 @@ public class CalculationResult {
 
 	public BigDecimal getCalculatedAmount() {
 		return calculatedAmount;
+	}
+
+	public static CalculationResult of(ExchangeRate exchangeRateFrom,
+									   ExchangeRate exchangeRateTo,
+									   BigDecimal amount,
+									   String date) {
+		BigDecimal rateFrom = exchangeRateFrom.getRate();
+		BigDecimal rateTo = exchangeRateTo.getRate();
+		BigDecimal calculatedAmount = (amount.multiply(rateFrom).divide(rateTo, 2, BigDecimal.ROUND_FLOOR));
+
+		String currencyFrom = exchangeRateFrom.getCurrency();
+		String currencyTo = exchangeRateTo.getCurrency();
+		return new CalculationResult(currencyFrom, currencyTo, date, amount, calculatedAmount);
+
 	}
 }

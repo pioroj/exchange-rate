@@ -14,6 +14,8 @@ import java.time.format.DateTimeFormatter;
 @Transactional
 public class StandardCalculationPanel implements CalculationPanel {
 
+	private static final DateTimeFormatter STANDARD_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
 	private ExchangeRatesRepository exchangeRatesRepository;
 
 	public StandardCalculationPanel(ExchangeRatesRepository exchangeRatesRepository) {
@@ -24,25 +26,23 @@ public class StandardCalculationPanel implements CalculationPanel {
 	public CalculationResult calculate(CalculationRequest command) {
 		String currencyFrom = command.getFrom();
 		String currencyTo = command.getTo();
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		LocalDate date = LocalDate.parse(command.getDate(), dtf);
+		LocalDate date = LocalDate.parse(command.getDate(), STANDARD_DATE_TIME_FORMATTER);
 		BigDecimal amount = command.getAmount();
 
-		BigDecimal rateFrom = getExchangeRate(date, currencyFrom).getRate();
-		BigDecimal rateTo = getExchangeRate(date, currencyTo).getRate();
-		BigDecimal calculatedAmount = (amount.multiply(rateFrom).divide(rateTo, 2, BigDecimal.ROUND_FLOOR));
+		ExchangeRate exchangeRateFrom = getExchangeRate(date, currencyFrom);
+		ExchangeRate exchangeRateTo = getExchangeRate(date, currencyTo);
 
-		return new CalculationResult(currencyFrom, currencyTo, command.getDate(), amount, calculatedAmount);
+		return CalculationResult.of(exchangeRateFrom, exchangeRateTo, amount, command.getDate());
 	}
 
 	private ExchangeRate getExchangeRate(LocalDate date, String currencyFrom) {
-		ExchangeRate exchangeRateFrom;
+		ExchangeRate exchangeRate;
 		if (currencyFrom.equals(ExchangeRate.getDefaultCurrency())) {
-			exchangeRateFrom = ExchangeRate.getDefault();
+			exchangeRate = ExchangeRate.getDefault();
 		} else {
-			exchangeRateFrom = exchangeRatesRepository.get(date, currencyFrom);
+			exchangeRate = exchangeRatesRepository.get(date, currencyFrom);
 		}
-		return exchangeRateFrom;
+		return exchangeRate;
 	}
 
 
