@@ -28,11 +28,9 @@ public class StandardCalculationPanel implements CalculationPanel {
 		LocalDate date = LocalDate.parse(command.getDate(), dtf);
 		BigDecimal amount = command.getAmount();
 
-		ExchangeRate exchangeRateFrom = getExchangeRate(date, currencyFrom);
-		ExchangeRate exchangeRateTo = getExchangeRate(date, currencyTo);
-
-		BigDecimal calculatedAmount =
-				(amount.multiply(exchangeRateFrom.getRate()).divide(exchangeRateTo.getRate(), 2, BigDecimal.ROUND_FLOOR));
+		BigDecimal rateFrom = getExchangeRate(date, currencyFrom).getRate();
+		BigDecimal rateTo = getExchangeRate(date, currencyTo).getRate();
+		BigDecimal calculatedAmount = (amount.multiply(rateFrom).divide(rateTo, 2, BigDecimal.ROUND_FLOOR));
 
 		return new CalculationResult(currencyFrom, currencyTo, command.getDate(), amount, calculatedAmount);
 	}
