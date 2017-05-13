@@ -37,15 +37,15 @@ public class StandardCalculationPanel implements CalculationPanel {
 		BigDecimal rateTo = exchangeRateTo.getRate();
 		BigDecimal rateFrom = exchangeRateFrom.getRate();
 
-		if (currencyFrom.equals("PLN")) {
+		if (currencyFrom.equals(ExchangeRate.getDefaultCurrency())) {
 			calculatedAmount = amount.divide(rateTo, new MathContext(4));
 		}
 
-		if (currencyTo.equals("PLN")) {
+		if (currencyTo.equals(ExchangeRate.getDefaultCurrency())) {
 			calculatedAmount = amount.multiply(rateFrom);
 		}
 
-		if (!(currencyTo.equals("PLN")) && !(currencyFrom.equals("PLN"))) {
+		if (!(currencyTo.equals(ExchangeRate.getDefaultCurrency())) && !(currencyFrom.equals(ExchangeRate.getDefaultCurrency()))) {
 			calculatedAmount = (amount.multiply(rateFrom)).divide(rateTo, new MathContext(4));
 		}
 
@@ -54,7 +54,7 @@ public class StandardCalculationPanel implements CalculationPanel {
 
 	private ExchangeRate getExchangeRate(LocalDate date, String currencyFrom1) {
 		ExchangeRate exchangeRateFrom;
-		if (currencyFrom1.equals("PLN")) {
+		if (currencyFrom1.equals(ExchangeRate.getDefaultCurrency())) {
 			exchangeRateFrom = ExchangeRate.getDefault();
 		} else {
 			exchangeRateFrom = exchangeRatesRepository.get(date, currencyFrom1);

@@ -13,6 +13,7 @@ import java.time.LocalDate;
 public class ExchangeRate {
 
 	private static final ExchangeRate DEFAULT = new ExchangeRate(null, "PLN", BigDecimal.ONE);
+	private static final String DEFAULT_CURRENCY = "PLN";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,4 +48,7 @@ public class ExchangeRate {
 		return DEFAULT;
 	}
 
+	public static String getDefaultCurrency() {
+		return DEFAULT_CURRENCY;
+	}
 }
