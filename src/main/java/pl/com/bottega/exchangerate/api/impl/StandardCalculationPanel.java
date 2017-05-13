@@ -4,7 +4,7 @@ import pl.com.bottega.exchangerate.api.CalculationPanel;
 import pl.com.bottega.exchangerate.domain.CalculationResult;
 import pl.com.bottega.exchangerate.domain.ExchangeRate;
 import pl.com.bottega.exchangerate.domain.ExchangeRatesRepository;
-import pl.com.bottega.exchangerate.domain.commands.CalculationRequestCommand;
+import pl.com.bottega.exchangerate.domain.commands.CalculationRequest;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
@@ -22,7 +22,7 @@ public class StandardCalculationPanel implements CalculationPanel {
 	}
 
 	@Override
-	public CalculationResult calculate(CalculationRequestCommand command) {
+	public CalculationResult calculate(CalculationRequest command) {
 		String from = command.getFrom();
 		String to = command.getTo();
 		String date = command.getDate();

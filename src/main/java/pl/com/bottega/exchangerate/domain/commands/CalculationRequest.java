@@ -1,17 +1,15 @@
 package pl.com.bottega.exchangerate.domain.commands;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.math.BigDecimal;
 
-public class CalculationRequestCommand implements Validatable {
+public class CalculationRequest implements Validatable {
 
 	private String from;
 	private String to;
 	private String date;
 	private BigDecimal amount;
 
-	public CalculationRequestCommand() {
+	public CalculationRequest() {
 	}
 
 	public String getFrom() {

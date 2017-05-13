@@ -22,25 +22,27 @@ public class JPAExchangeRatesRepository implements ExchangeRatesRepository {
 
 	@Override
 	public ExchangeRate get(LocalDate date, String currency) {
-		Query query = entityManager.createQuery("FROM ExchangeRate e WHERE e.date =:date AND e.currency =:currency)");
-		query.setParameter("date", date);
-		query.setParameter("currency", currency);
+		Query query = prepareQueryStatement(date, currency);
 		List<ExchangeRate> exchangeRates = query.getResultList();
 		if (exchangeRates.isEmpty())
 			throw new NoRateException();
-		ExchangeRate exchangeRate = (ExchangeRate) query.getResultList().get(0);
-		return exchangeRate;
+		return (ExchangeRate) query.getResultList().get(0);
 	}
 
 	@Override
 	public void removeExistingRates(LocalDate date, String currency) {
-		Query query = entityManager.createQuery("FROM ExchangeRate e WHERE e.date =:date AND e.currency =:currency)");
-		query.setParameter("date", date);
-		query.setParameter("currency", currency);
+		Query query = prepareQueryStatement(date, currency);
 		List<ExchangeRate> exchangeRates = query.getResultList();
 		for (ExchangeRate exchangeRate : exchangeRates) {
 			entityManager.remove(exchangeRate);
 		}
+	}
+
+	private Query prepareQueryStatement(LocalDate date, String currency) {
+		Query query = entityManager.createQuery("FROM ExchangeRate e WHERE e.date =:date AND e.currency =:currency)");
+		query.setParameter("date", date);
+		query.setParameter("currency", currency);
+		return query;
 	}
 
 }

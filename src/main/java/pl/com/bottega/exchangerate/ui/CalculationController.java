@@ -1,12 +1,10 @@
 package pl.com.bottega.exchangerate.ui;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.com.bottega.exchangerate.api.CalculationPanel;
 import pl.com.bottega.exchangerate.domain.CalculationResult;
-import pl.com.bottega.exchangerate.domain.commands.CalculationRequestCommand;
+import pl.com.bottega.exchangerate.domain.commands.CalculationRequest;
 
 @RestController
 public class CalculationController {
@@ -18,7 +16,7 @@ public class CalculationController {
 	}
 
 	@GetMapping("/calculation")
-	CalculationResult calculate(CalculationRequestCommand command) {
+	CalculationResult calculate(CalculationRequest command) {
 		return calculationPanel.calculate(command);
 	}
 

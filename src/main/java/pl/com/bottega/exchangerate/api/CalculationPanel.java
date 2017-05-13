@@ -1,10 +1,10 @@
 package pl.com.bottega.exchangerate.api;
 
 import pl.com.bottega.exchangerate.domain.CalculationResult;
-import pl.com.bottega.exchangerate.domain.commands.CalculationRequestCommand;
+import pl.com.bottega.exchangerate.domain.commands.CalculationRequest;
 
 public interface CalculationPanel {
 
-	CalculationResult calculate(CalculationRequestCommand command);
+	CalculationResult calculate(CalculationRequest command);
 
 }
